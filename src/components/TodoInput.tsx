@@ -1,11 +1,13 @@
 import React, { FormEvent, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import { TodoType } from './Main';
+import { add_todos } from '../redux/modules/todos';
+import { useAppDispatch } from '../hooks';
 
-function TodoInput({ setTodo }: { setTodo: React.Dispatch<React.SetStateAction<TodoType[]>> }) {
+function TodoInput() {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const dispatch = useAppDispatch();
 
   const todoTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -23,7 +25,7 @@ function TodoInput({ setTodo }: { setTodo: React.Dispatch<React.SetStateAction<T
       id: uuidv4(),
       isDone: false
     };
-    setTodo((prev) => [...prev, newTodo]);
+    dispatch(add_todos(newTodo));
     setTitle('');
     setContent('');
   };

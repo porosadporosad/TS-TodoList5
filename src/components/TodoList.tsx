@@ -1,33 +1,24 @@
-import React from 'react';
-import { TodoType } from './Main';
 import styled from 'styled-components';
+import { change_todos, delete_todos } from '../redux/modules/todos';
+import { useAppDispatch, useAppSelector } from '../hooks';
 
-function TodoList({
-  todo,
-  setTodo,
-  bool
-}: {
-  todo: TodoType[];
-  setTodo: React.Dispatch<React.SetStateAction<TodoType[]>>;
-  bool: boolean;
-}) {
+function TodoList({bool}: {bool: boolean}) {
+  const dispatch = useAppDispatch();
+  const todo = useAppSelector((state) => state.todos.todo);
+
   // 삭제
   const todoListDel = (id: string) => {
-    const newTodos = todo.filter((prev) => prev.id !== id);
     const delReal = window.confirm('정말 삭제하시겠습니까?');
     if (delReal) {
-      setTodo(newTodos);
+      dispatch(delete_todos(id))
     } else {
       return;
     }
   };
 
   // 변경
-  const todoListChange = (nowTodo: TodoType) => {
-    const findIndex = todo.findIndex((prev) => prev.id === nowTodo.id);
-    const copiedItems = [...todo];
-    copiedItems[findIndex].isDone = !copiedItems[findIndex].isDone;
-    setTodo(copiedItems);
+  const todoListChange = (id: string) => {
+    dispatch(change_todos(id))
   };
 
   return (
@@ -47,7 +38,7 @@ function TodoList({
                 </TodoListText>
                 <TodoListBtns>
                   <TodoListDelBtn onClick={() => todoListDel(prev.id)}>삭제하기</TodoListDelBtn>
-                  <TodoListBtn onClick={() => todoListChange(prev)}>{bool ? '완료' : '취소'}</TodoListBtn>
+                  <TodoListBtn onClick={() => todoListChange(prev.id)}>{bool ? '완료' : '취소'}</TodoListBtn>
                 </TodoListBtns>
               </TodoListCard>
             );
