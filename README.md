@@ -1,8 +1,10 @@
 # Chapter 5 주특기 플러스(TypeScript)
-Level 1 : React 이용 Todolist
+Typescript 개인 과제
 
 ## 🖥️프로젝트 소개
 Todolist를 TypeScript로 만들어 봅시다.
+
+Level 1 : React 이용 Todolist
 
 ### 🕰️개발 시간
 - 24.03.04 - 24.03.08
