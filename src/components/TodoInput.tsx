@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 import { add_todos } from '../redux/modules/todos';
 import { useAppDispatch } from '../hooks';
+import axios from 'axios';
 
 function TodoInput() {
   const [title, setTitle] = useState<string>('');
@@ -17,7 +18,7 @@ function TodoInput() {
     setContent(e.target.value);
   };
 
-  const todoSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const todoSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newTodo = {
       title,
@@ -25,7 +26,8 @@ function TodoInput() {
       id: uuidv4(),
       isDone: false
     };
-    dispatch(add_todos(newTodo));
+    const { data } = await axios.post("http://localhost:3001/todos",newTodo);
+    dispatch(add_todos(data));
     setTitle('');
     setContent('');
   };

@@ -1,15 +1,18 @@
 import styled from 'styled-components';
-import { change_todos, delete_todos } from '../redux/modules/todos';
+import { change_todos, delete_todos, set_todos } from '../redux/modules/todos';
 import { useAppDispatch, useAppSelector } from '../hooks';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 function TodoList({bool}: {bool: boolean}) {
   const dispatch = useAppDispatch();
   const todo = useAppSelector((state) => state.todos.todo);
 
   // 삭제
-  const todoListDel = (id: string) => {
+  const todoListDel = async (id: string) => {
     const delReal = window.confirm('정말 삭제하시겠습니까?');
     if (delReal) {
+      await axios.delete(`http://localhost:3001/todos/${id}` )
       dispatch(delete_todos(id))
     } else {
       return;
@@ -17,9 +20,18 @@ function TodoList({bool}: {bool: boolean}) {
   };
 
   // 변경
-  const todoListChange = (id: string) => {
+  const todoListChange = async (id: string, isDone: boolean) => {
+    await axios.patch(`http://localhost:3001/todos/${id}`, {isDone: !isDone})
     dispatch(change_todos(id))
   };
+
+  useEffect(() => {
+    const dbDate = async() => {
+      const { data } = await axios.get("http://localhost:3001/todos");
+      dispatch(set_todos(data))
+    }
+    dbDate()
+  },[])
 
   return (
     <TodoListMain>
@@ -38,7 +50,7 @@ function TodoList({bool}: {bool: boolean}) {
                 </TodoListText>
                 <TodoListBtns>
                   <TodoListDelBtn onClick={() => todoListDel(prev.id)}>삭제하기</TodoListDelBtn>
-                  <TodoListBtn onClick={() => todoListChange(prev.id)}>{bool ? '완료' : '취소'}</TodoListBtn>
+                  <TodoListBtn onClick={() => todoListChange(prev.id, prev.isDone)}>{bool ? '완료' : '취소'}</TodoListBtn>
                 </TodoListBtns>
               </TodoListCard>
             );
