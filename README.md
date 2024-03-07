@@ -4,7 +4,7 @@ Typescript 개인 과제
 ## 🖥️프로젝트 소개
 Todolist를 TypeScript로 만들어 봅시다.
 
-Level 1 : React 이용 Todolist
+Level 2 : RTK 이용 Todolist
 
 ### 🕰️개발 시간
 - 24.03.04 - 24.03.08
@@ -14,6 +14,7 @@ Level 1 : React 이용 Todolist
 - Vite
 - Yarn
 - TypeScript
+- RTK
 
 ### 📌주요 기능
 - Todo 항목 추가 하기
