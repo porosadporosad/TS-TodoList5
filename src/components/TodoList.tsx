@@ -1,47 +1,56 @@
 import styled from 'styled-components';
-import { change_todos, delete_todos, set_todos } from '../redux/modules/todos';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import axios from 'axios';
-import { useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { TodoType, changeTodo, deleteTodo, getTodos } from '../api/axios';
 
 function TodoList({bool}: {bool: boolean}) {
-  const dispatch = useAppDispatch();
-  const todo = useAppSelector((state) => state.todos.todo);
+  const { isLoading, isError, data:todo } = useQuery("todos", getTodos);
+  const queryClient = useQueryClient();
+	
+	const deletemutation = useMutation(deleteTodo, {
+	  onSuccess: () => {
+	    queryClient.invalidateQueries("todos");
+	  },
+  });
+
+  const changemutation = useMutation(changeTodo, {
+	  onSuccess: () => {
+	    queryClient.invalidateQueries("todos");
+	  },
+  });
 
   // 삭제
   const todoListDel = async (id: string) => {
     const delReal = window.confirm('정말 삭제하시겠습니까?');
     if (delReal) {
-      await axios.delete(`http://localhost:3001/todos/${id}` )
-      dispatch(delete_todos(id))
+      deletemutation.mutate(id)
     } else {
       return;
     }
   };
 
   // 변경
-  const todoListChange = async (id: string, isDone: boolean) => {
-    await axios.patch(`http://localhost:3001/todos/${id}`, {isDone: !isDone})
-    dispatch(change_todos(id))
+  const todoListChange = async (todo:TodoType) => {
+    changemutation.mutate(todo);
   };
 
-  useEffect(() => {
-    const dbDate = async() => {
-      const { data } = await axios.get("http://localhost:3001/todos");
-      dispatch(set_todos(data))
-    }
-    dbDate()
-  },[])
+
+  if(isLoading){
+    return <div>로딩중..</div>
+  }
+
+  if(isError){
+    return <div>에러!</div>
+  }
 
   return (
     <TodoListMain>
       {bool ? 'Working..🔥' : 'Done..!🎉'}
       <TodoListFlex>
-        {todo
-          .filter((item) => {
+        {todo?.data
+          .filter((item:TodoType) => {
             return item.isDone === bool;
           })
-          .map((prev) => {
+          .map((prev:TodoType) => {
             return (
               <TodoListCard key={prev.id}>
                 <TodoListText>
@@ -50,7 +59,7 @@ function TodoList({bool}: {bool: boolean}) {
                 </TodoListText>
                 <TodoListBtns>
                   <TodoListDelBtn onClick={() => todoListDel(prev.id)}>삭제하기</TodoListDelBtn>
-                  <TodoListBtn onClick={() => todoListChange(prev.id, prev.isDone)}>{bool ? '완료' : '취소'}</TodoListBtn>
+                  <TodoListBtn onClick={() => todoListChange(prev)}>{bool ? '완료' : '취소'}</TodoListBtn>
                 </TodoListBtns>
               </TodoListCard>
             );

@@ -1,14 +1,19 @@
 import React, { FormEvent, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import { add_todos } from '../redux/modules/todos';
-import { useAppDispatch } from '../hooks';
-import axios from 'axios';
+import { useMutation, useQueryClient } from 'react-query';
+import { addTodo } from '../api/axios';
 
 function TodoInput() {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
-  const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
+	
+	const mutation = useMutation(addTodo, {
+	  onSuccess: () => {
+	    queryClient.invalidateQueries("todos");
+	  },
+  });
 
   const todoTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -26,8 +31,7 @@ function TodoInput() {
       id: uuidv4(),
       isDone: false
     };
-    const { data } = await axios.post("http://localhost:3001/todos",newTodo);
-    dispatch(add_todos(data));
+    mutation.mutate(newTodo)
     setTitle('');
     setContent('');
   };
