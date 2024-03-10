@@ -6,11 +6,11 @@ Typescript 개인 과제
 
 Todolist를 TypeScript로 만들어 봅시다.
 
-Level 3 : RTK + json-server 이용 Todolist
+Level 5 : RTK + react-query 이용 Todolist
 
 ### 🕰️개발 시간
 
-- 24.03.04 - 24.03.08
+- 24.03.04 - 24.03.09
 
 ### ⚙️개발 환경
 
@@ -18,9 +18,9 @@ Level 3 : RTK + json-server 이용 Todolist
 - Vite
 - Yarn
 - TypeScript
-- RTK
 - Json-Server
 - Axios
+- React Query
 
 ### 📌주요 기능
 
